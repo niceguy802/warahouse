@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.wms.dao.OutcomeMapper">
+    
+    <select id="findById" parameterType="int" resultType="outcome">
+    select * from outcome where id = #{id}
+  </select> 
+  
+  <select id="findByQuery" resultType="outcome"  parameterType="outcomeQuery">
+    select * from outcome
+     <where>
+        <if test="sn != null">
+        and sn = #{sn}
+        </if>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="outcomeQuery">
+     select count(*) from outcome 
+     <where>
+        <if test="sn != null">
+        and sn = #{sn}
+        </if>
+     </where>
+  </select>
+  
+  <insert id="add" parameterType="outcome" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into outcome
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        sn,
+        totalAmount,
+        totalNumber,
+        createTime,
+        userId,
+        storeId,
+        clientId,
+        status,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{sn},
+        #{totalAmount},
+        #{totalNumber},
+        #{createTime},
+        #{userId},
+        #{storeId},
+        #{clientId},
+        #{status},
+    </trim>
+  </insert>
+  
+  <delete id="delete">
+    delete from outcome where id in
+    <foreach collection="array" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </delete>
+</mapper>

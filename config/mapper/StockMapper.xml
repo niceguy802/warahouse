@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.wms.dao.StockMapper">
+  
+  <select id="statisProductStock" resultType="java.util.HashMap">
+      SELECT SUM(storeCount) number,productName FROM stock GROUP BY productId,productName
+  </select>
+  
+  <select id="findByQuery" resultType="stock"  parameterType="stockQuery">
+    select * from stock
+     <where>
+        <if test="storeId != null">
+        and storeId = #{storeId}
+        </if>
+        <if test="productId != null">
+        and productId = #{productId}
+        </if>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+  
+  <!-- 查找当前条件下的总的记录数 -->
+  <select id="findCount" resultType="long" parameterType="stockQuery">
+     select count(*) from stock 
+     <where>
+        <if test="storeId != null">
+        and storeId = #{storeId}
+        </if>
+        <if test="productId != null">
+        and productId = #{productId}
+        </if>
+     </where>
+  </select>
+  <insert id="add" parameterType="stock" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into stock
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        storeCount,
+        incomeDate,
+        productName,
+        productId,
+        storeId,
+        storeName,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{storeCount},
+        #{incomeDate},
+        #{productName},
+        #{productId},
+        #{storeId},
+        #{storeName},
+    </trim>
+  </insert>
+   
+   <!-- 出库,非第一次入库 -->
+  <update id="update" parameterType="stock">
+    update stock
+    <set>
+      <if test="incomeDate != null">
+        incomeDate = #{incomeDate},
+      </if>
+      storeCount=storeCount + #{storeCount},
+      
+      <if test="outcomeDate != null">
+        outcomeDate = #{outcomeDate},
+      </if>
+    </set>
+    where storeId = #{storeId} and productId = #{productId}
+  </update>
+<!--   删除入库单 库存数量减少 -->
+  <update id="updateLess" parameterType="stock">
+    update stock set storeCount=storeCount - #{storeCount}
+    where storeId = #{storeId} and productId = #{productId}
+  </update>
+  
+  <!--   更新库存时间减少 -->
+   <update id="updateIncomeDate" parameterType="stock">
+   update stock set IncomeDate=#{IncomeDate}
+   where storeId = #{storeId} and productId = #{productId} and storeCount=storeCount - #{storeCount}
+  </update>
+  
+</mapper>

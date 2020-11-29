@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.neu.wms.dao.RoleMapper">
+  <select id="findCountByLoginName" resultType="int">
+     select count(*) from role where name = #{name}
+  </select>
+  
+  <select id="findById" resultType="role" parameterType="int">
+       select * from role where id = #{id}
+  </select>
+   
+  <select id="findByQuery" resultType="role"  parameterType="roleQuery">
+    select * from role
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+ 
+ 
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="roleQuery">
+     select count(*) from role 
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+     </where>
+  </select>
+  
+  <!-- 添加 -->
+<insert id="add" parameterType="role">
+    insert into role (name) values(#{name})
+  </insert>
+   
+  <delete id="delete">
+delete from role where id in
+<foreach collection="array" open="(" close=")" separator="," item="item">
+  #{item}
+</foreach>
+  </delete>
+  
+  <!-- 根据Id更新 -->
+  <update id="update" parameterType="role">
+    update role set name = #{name} where id = #{id}
+  </update>
+  
+  
+  <!-- 根据用户的Id,查找当前的角色信息 -->
+  <select id="findRoleByUserId" resultType="role" parameterType="int">
+      select r.* from role r,middle_user_role m where r.id = m.roleId and m.userId = #{userId}
+  </select>
+  
+</mapper>

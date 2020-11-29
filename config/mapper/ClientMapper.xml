@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.neu.wms.dao.ClientMapper">
+  
+  
+  <select id="findById" resultType="client" parameterType="int">
+       select * from client where id = #{id}
+  </select>
+   
+  <select id="findByQuery" resultType="client"  parameterType="clientQuery">
+    select * from client
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+        <if test="phone != null">
+        and phone = #{phone}
+        </if>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+ 
+ 
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="clientQuery">
+     select count(*) from client 
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+        <if test="phone != null">
+        and phone = #{phone}
+        </if>
+     </where>
+  </select>
+  
+  <!-- 添加 -->
+  <insert id="add" parameterType="client">
+    insert into client
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        id,
+        name,
+        phone,
+        sn,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{id},
+        #{name},
+        #{phone},
+        #{sn},
+    </trim>
+  </insert>
+   
+  <delete id="delete">
+    delete from client where id in
+    <foreach collection="array" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </delete>
+  
+  <!-- 根据Id更新 -->
+  <update id="update" parameterType="client">
+    update client 
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="phone != null">
+        phone = #{phone},
+      </if>
+      <if test="sn != null">
+        sn = #{sn},
+      </if>
+    </set>
+        where id = #{id}
+  </update>
+  
+</mapper>

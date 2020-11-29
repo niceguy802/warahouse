@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.wms.dao.BookMapper">
+    
+	  <select id="findById" parameterType="int" resultType="book">
+	    select * from book where id = #{id}
+	  </select>
+  
+	  <select id="findByQuery" resultType="book"  parameterType="bookQuery">
+	    select * from book
+	     <where>
+	        <if test="sn != null">
+	        and sn = #{sn}
+	        </if>
+	     </where>
+	     limit #{offset},#{pageSize}
+	  </select>
+ 
+	  <!-- 查找当前条件下的总的记录数 --> 	
+	  <select id="findCount" resultType="long" parameterType="bookQuery">
+	     select count(*) from book 
+	     <where>
+	        <if test="sn != null">
+	        and sn = #{sn}
+	        </if>
+	     </where>
+	  </select>
+	  <!-- 添加订单 -->
+	  <insert id="add" parameterType="book" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	    insert into book
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	        sn,
+	        totalAmount,
+	        totalCount,
+	        createDate,
+	        makeUserId,
+	        supplierId,
+	      <if test="finishDate != null">
+	        finishDate,
+	      </if>
+	        status,
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+	        #{sn},
+	        #{totalAmount},
+	        #{totalCount},
+	        #{createDate},
+	        #{makeUserId},
+	        #{supplierId},
+	      <if test="finishDate != null">
+	        #{finishDate},
+	      </if>
+	        #{status},
+	    </trim>
+	  </insert>
+	  
+	  <!-- 删除 -->
+	  <delete id="delete">
+	    delete from book where id in
+	    <foreach collection="array" open="(" close=")" separator="," item="item">
+	      #{item}
+	    </foreach>
+	  </delete>
+	  
+	   <!-- 更新 -->
+	  <update id="update" parameterType="book">
+	    update book
+	    <set>
+	      <if test="finishDate != null">
+	        finishDate = #{finishDate},
+	      </if>
+	      <if test="status != null">
+	        status = #{status},
+	      </if>
+	    </set>
+	    where id = #{id}
+	  </update>
+	  
+	  <update id="updateStatusBySn" parameterType="bookQuery">
+	    update book set status=2 where sn = #{sn}
+	  </update>
+   
+</mapper>

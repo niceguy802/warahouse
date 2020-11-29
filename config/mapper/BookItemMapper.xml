@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.wms.dao.BookItemMapper">
+ 
+  <select id="findByQuery" resultType="bookItem"  parameterType="bookItemQuery">
+    select * from bookItem
+     <where>
+        <if test="bookId != null">
+        and bookId = #{bookId}
+        </if>
+        <if test="bookSn != null">
+        and bookSn = #{bookSn}
+        </if>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+  
+   <select id="statisBook" resultType="java.util.HashMap">
+       select sum(number) num,productName from bookitem group by productId,productName 
+   </select>
+  
+   <select id="findByBookSn" resultType="bookItem"  parameterType="bookItemQuery">
+    select * from bookItem
+    <where>
+    <if test="bookSn != null">
+        and bookSn = #{bookSn}
+    </if>
+    </where>
+  </select>
+ 
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="bookItemQuery">
+     select count(*) from bookItem 
+     <where>
+        <if test="bookId != null">
+        and bookId = #{bookId}
+        </if>
+        <if test="bookSn != null">
+        and bookSn = #{bookSn}
+        </if>
+     </where>
+  </select>
+  
+ <!-- 添加到明细 -->
+  <insert id="add" parameterType="bookItem">
+    insert into bookItem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        costPrice,
+        number,
+        amount,
+        productId,
+        productName,
+        bookId,
+        bookSn,
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{costPrice},
+        #{number},
+        #{amount},
+        #{productId},
+        #{productName},
+        #{bookId},
+        #{bookSn},
+      <if test="remark != null">
+        #{remark},
+      </if>
+    </trim>
+  </insert>
+  <!-- 更新入库 -->
+  <update id="updateInput">
+    update bookItem
+    <set>
+      <if test="input != null">
+        input = input + #{input},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <!-- 删除 -->
+  <delete id="deleteByBookId" parameterType="int">
+     delete from bookItem where bookId = #{bookId}
+  </delete>
+</mapper>

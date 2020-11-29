@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.wms.dao.IncomeMapper">
+    
+  <select id="findById" parameterType="int" resultType="income">
+    select * from income where id = #{id}
+  </select>
+  
+     
+  <select id="findByQuery" resultType="income"  parameterType="incomeQuery">
+    select * from income
+     <where>
+        <if test="sn != null">
+        and sn = #{sn}
+        </if>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+ 
+ 
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="incomeQuery">
+     select count(*) from income 
+     <where>
+        <if test="sn != null">
+        and sn = #{sn}
+        </if>
+     </where>
+  </select>
+  
+  
+  <insert id="add" parameterType="income" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into income
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        sn,
+        totalAmount,
+        totalNumber,
+        createDate,
+        makeUserId,
+        bookId,
+        storeId,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{sn},
+        #{totalAmount},
+        #{totalNumber},
+        #{createDate},
+        #{makeUserId},
+        #{bookId},
+        #{storeId},
+    </trim>
+  </insert>
+  
+  <delete id="delete">
+    delete from income where id in
+    <foreach collection="array" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </delete>
+</mapper>

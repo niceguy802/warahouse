@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.wms.dao.ProductMapper">
+ 
+  <sql id="Base_Column_List">
+    id, name, sn, costPrice, salePrice, img, remark, brandId
+  </sql>
+  
+  <select id="findById" parameterType="int" resultType="product">
+    select 
+    <include refid="Base_Column_List" />
+    from product
+    where id = #{id}
+  </select>
+  
+  <select id="findByQuery" resultType="product"  parameterType="productQuery">
+    select 
+     <include refid="Base_Column_List" />
+     from product
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+        <if test="sn != null">
+        and sn = #{sn}
+        </if>
+        
+     </where> 
+     limit #{offset},#{pageSize}
+  </select>
+ 
+ 
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="productQuery">
+     select count(*) from product 
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+        <if test="sn != null">
+        and sn = #{sn}
+        </if>
+     </where>
+  </select>
+   
+  <insert id="add" parameterType="product">
+    insert into product
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        name,
+        sn,
+        costPrice,
+        salePrice,
+        img,
+      <if test="remark != null">
+        remark,
+      </if>
+        brandId,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{name},
+        #{sn},
+        #{costPrice},
+        #{salePrice},
+        #{img},
+      <if test="remark != null">
+        #{remark},
+      </if>
+        #{brandId},
+    </trim>
+  </insert>
+  
+  <delete id="delete">
+    delete from product where id in
+    <foreach collection="array" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </delete>
+ 
+  <update id="update" parameterType="product">
+    update product
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="sn != null">
+        sn = #{sn},
+      </if>
+      <if test="costPrice != null">
+        costPrice = #{costPrice},
+      </if>
+      <if test="salePrice != null">
+        salePrice = #{salePrice},
+      </if>
+      <if test="img != null">
+        img = #{img},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+      <if test="brandId != null">
+        brandId = #{brandId},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

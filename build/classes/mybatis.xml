@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  
+<configuration>
+
+  <typeAliases>
+    <typeAlias type="com.neu.wms.domain.User" alias="user"/>
+    <typeAlias type="com.neu.wms.query.UserQuery" alias="userQuery"/>
+    <typeAlias type="com.neu.wms.domain.Dept" alias="dept"/>
+    <typeAlias type="com.neu.wms.query.DeptQuery" alias="deptQuery"/>
+    <typeAlias type="com.neu.wms.domain.Role" alias="role"/>
+    <typeAlias type="com.neu.wms.query.RoleQuery" alias="roleQuery"/>
+    <typeAlias type="com.neu.wms.domain.Brand" alias="brand"/>
+    <typeAlias type="com.neu.wms.query.BrandQuery" alias="brandQuery"/>
+    <typeAlias type="com.neu.wms.domain.Product" alias="product"/>
+    <typeAlias type="com.neu.wms.query.ProductQuery" alias="productQuery"/>
+    <typeAlias type="com.neu.wms.domain.Client" alias="client"/>
+    <typeAlias type="com.neu.wms.query.ClientQuery" alias="clientQuery"/>
+    <typeAlias type="com.neu.wms.domain.Supplier" alias="supplier"/>
+    <typeAlias type="com.neu.wms.query.SupplierQuery" alias="supplierQuery"/>
+    <typeAlias type="com.neu.wms.domain.Book" alias="book"/>
+    <typeAlias type="com.neu.wms.query.BookQuery" alias="bookQuery"/>
+    <typeAlias type="com.neu.wms.domain.BookItem" alias="bookItem"/>
+    <typeAlias type="com.neu.wms.query.BookItemQuery" alias="bookItemQuery"/>
+    <typeAlias type="com.neu.wms.domain.Store" alias="store"/>
+    <typeAlias type="com.neu.wms.query.StoreQuery" alias="storeQuery"/>
+    <typeAlias type="com.neu.wms.domain.Income" alias="income"/>
+    <typeAlias type="com.neu.wms.query.IncomeQuery" alias="incomeQuery"/>
+    <typeAlias type="com.neu.wms.domain.IncomeItem" alias="incomeItem"/>
+    <typeAlias type="com.neu.wms.query.IncomeItemQuery" alias="incomeItemQuery"/>
+    <typeAlias type="com.neu.wms.domain.Stock" alias="stock"/>
+    <typeAlias type="com.neu.wms.query.StockQuery" alias="stockQuery"/>
+    <typeAlias type="com.neu.wms.domain.Outcome" alias="outcome"/>
+    <typeAlias type="com.neu.wms.query.OutcomeQuery" alias="outcomeQuery"/>
+    <typeAlias type="com.neu.wms.domain.OutcomeItem" alias="outcomeItem"/>
+    <typeAlias type="com.neu.wms.query.OutcomeItemQuery" alias="outcomeItemQuery"/>
+  </typeAliases>
+  
+  <!-- 指定映射文件的路径,和spring整合的时候,这个不在这里写,在spring的配置文件中编写 -->
+<!--  
+  <mappers>
+    <mapper resource="mapper/UserMapper.xml"/>
+  </mappers>  
+ -->
+  
+  
+</configuration>

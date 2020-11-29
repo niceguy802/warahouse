@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.neu.wms.dao.DeptMapper">
+
+<select id="findCountByLoginName" resultType="int">
+     select count(*) from dept where name = #{name}
+  </select>
+  <select id="findById" resultType="dept" parameterType="int">
+     select *from dept where id = #{id}
+  </select>
+  
+  <select id="findByQuery" resultType="dept" parameterType="deptQuery">
+     select *from dept 
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+        <choose>
+           <when test="parentId !=null ">
+              and parentId = #{parentId}
+           </when>
+           <otherwise>
+              and parentId is null
+           </otherwise>
+        </choose>
+     </where>
+     limit #{offset},#{pageSize}
+  </select>
+ 
+  <!-- 查找当前条件下的总的记录数 --> 	
+  <select id="findCount" resultType="long" parameterType="deptQuery">
+     select count(*) from dept 
+     <where>
+        <if test="name != null">
+        and name = #{name}
+        </if>
+        <choose>
+           <when test="parentId !=null ">
+              and parentId = #{parentId}
+           </when>
+           <otherwise>
+              and parentId is null
+           </otherwise>
+        </choose>
+     </where>
+  </select>
+  
+  <!-- 添加 -->
+  <insert id="add" parameterType="dept">
+    insert into dept
+    <trim prefix="(" suffix=")"  suffixOverrides=",">
+        name,
+      <if test="parentId != null">
+        parentId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{name},
+      <if test="parentId != null">
+        #{parentId},
+      </if>
+    </trim>
+  </insert>
+   
+  <delete id="delete">
+     delete from dept where id in
+     <foreach collection="array" open="(" close=")" separator="," item="item">
+       #{item}
+     </foreach>
+  </delete>
+  
+  <update id="update" parameterType="dept">
+    update dept
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="parentId != null">
+        parentId = #{parentId},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  
+  
+</mapper>

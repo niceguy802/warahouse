@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.neu.wms.dao.BrandMapper">
+	 <select id="findById" resultType="brand" parameterType="int">
+	      select * from brand where id = #{id}
+	 </select>
+	  
+	 <select id="findByQuery" resultType="brand"  parameterType="brandQuery">
+	   select * from brand
+	    <where>
+	       <if test="name != null">
+	       and name = #{name}
+	       </if>
+	    </where>
+	    limit #{offset},#{pageSize}
+	 </select>
+	
+	 <!-- 查找当前条件下的总的记录数 --> 	
+	 <select id="findCount" resultType="long" parameterType="brandQuery">
+	    select count(*) from brand 
+	    <where>
+	       <if test="name != null">
+	       and name = #{name}
+	       </if>
+	    </where>
+	 </select>
+	 <!-- 添加 -->
+	 <insert id="add" parameterType="brand">
+	   insert into brand (name) values(#{name})
+	 </insert>
+	 <!-- 删除 -->
+	 <delete id="delete">
+	    delete from brand where id in
+	   <foreach collection="array" open="(" close=")" separator="," item="item">
+	       #{item}
+	   </foreach>
+	 </delete>
+	
+	 <!-- 根据Id更新 -->
+	 <update id="update" parameterType="brand">
+	   update brand set name = #{name} where id = #{id}
+	 </update>
+</mapper>

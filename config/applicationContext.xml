@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+     <!-- 这里是spring相关的配置 -->
+     
+     <!-- 配置service的扫描路径 -->
+     <context:component-scan base-package="com.neu.wms.service.impl"/>
+     
+     <!-- 事务处理本质AOP -->
+	 <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+	   <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+	   <property name="url" value="jdbc:mysql://localhost:3306/mywms"></property>
+	   <property name="username" value="root"></property>
+	   <property name="password" value="root"></property>
+	 </bean>
+	 
+	 <!-- 事务管理器 -->
+	 <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	     <property name="dataSource" ref="dataSource"></property>
+	 </bean>
+	 
+	 
+	 <!-- 事务增强 -->
+	 <tx:advice id="txAadvice" transaction-manager="transactionManager">
+	    <tx:attributes>
+	       <!-- 其实就是对切入点匹配的方法进一步的过滤 -->
+	       <!-- 查询一般都是不用事务，设置只读,这样效率高 -->
+	       
+	       <!-- 通用的配置 -->
+	       <tx:method name="find*" read-only="true"/>
+	       <tx:method name="query*" read-only="true"/>
+	       <tx:method name="get*" read-only="true"/>
+	       <tx:method name="*"/>
+	    </tx:attributes>
+	 </tx:advice>
+	 
+	 <!-- 配置切面 -->
+	 <aop:config>
+	    <aop:pointcut expression="execution(* com.neu.wms.service.impl.*ServiceImpl.*(..))" id="txPointcut"/>
+	    <aop:advisor advice-ref="txAadvice" pointcut-ref="txPointcut"/>
+	 </aop:config>
+	 
+	 
+	 <!-- spring+mybatis整合 -->
+	 <!-- spring来管理数据源(上面做了) -->
+	 <!-- spring来管理SqlSessionFactory(一个应用一般只有一个SqlSessionFactory,可以理解为DataSource) -->
+	 
+	 <bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	     <!-- 指定mybatis的配置文件路径 -->
+	     <property name="configLocation" value="classpath:mybatis.xml"></property>
+	     <property name="dataSource" ref="dataSource"></property>
+	     
+	     <!-- 指定映射文件的路径 -->
+	     <property name="mapperLocations">
+	        <list>
+	          <value>classpath:mapper/*Mapper.xml</value>
+	        </list>
+	     </property>
+	 </bean>
+	 
+	 <!-- 这个是用来生成DAO接口的代理对象,并且交给容器来管理 -->
+	 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="basePackage" value="com.neu.wms.dao"></property>
+	    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	 </bean>
+</beans>
